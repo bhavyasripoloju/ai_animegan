@@ -1,0 +1,15 @@
+input_dir = "../input_images"
+output_dir = "../output_images"
+os.makedirs(output_dir, exist_ok=True)
+
+for filename in os.listdir(input_dir):
+    if filename.endswith(('.jpg', '.jpeg', '.png')):
+        path = os.path.join(input_dir, filename)
+        image = Image.open(path).convert("RGB")
+        input_tensor = transform(image).unsqueeze(0)
+
+        with torch.no_grad():
+            output_tensor = model(input_tensor)[0]
+        
+        output_img = transforms.ToPILImage()(output_tensor.clamp(0, 1).cpu())
+        output_img.save(os.path.join(output_dir, f"anime_{filename}"))
